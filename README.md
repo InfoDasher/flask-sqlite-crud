@@ -10,7 +10,7 @@ A simple CRUD app with Flask + SQLite. Search, filter, status toggle, edit modal
 
 ```bash
 pip install -r requirements.txt
-python app.py
+python main.py
 ```
 
 ## API Endpoints
