@@ -390,10 +390,10 @@
 
       .intel-toast {
         opacity: 0;
-        transform: translateY(14px) scale(0.96);
+        transform: translateY(10px) scale(0.985);
         transition:
-          opacity 0.32s ease,
-          transform 0.32s ease;
+          opacity 0.44s cubic-bezier(0.22, 0.61, 0.36, 1),
+          transform 0.44s cubic-bezier(0.22, 0.61, 0.36, 1);
         will-change: opacity, transform;
         backface-visibility: hidden;
       }
@@ -405,7 +405,7 @@
 
       .intel-toast.exit {
         opacity: 0;
-        transform: translateY(-8px) scale(0.985);
+        transform: translateY(-6px) scale(0.99);
         pointer-events: none;
       }
 
@@ -1313,11 +1313,11 @@
         let feed = buildRailFeed();
         let pointer = 0;
 
-        const minVisibleMs = 6200;
-        const maxVisibleMs = 12000;
-        const minGapMs = 1300;
-        const maxGapMs = 4400;
-        const maxConcurrentToasts = 4;
+        const minVisibleMs = 9800;
+        const maxVisibleMs = 17000;
+        const minGapMs = 1800;
+        const maxGapMs = 5600;
+        const maxConcurrentToasts = 3;
 
         const randomBetween = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
 
@@ -1332,7 +1332,7 @@
           };
 
           card.addEventListener("transitionend", cleanup, { once: true });
-          setTimeout(cleanup, 420);
+          setTimeout(cleanup, 560);
         };
 
         const showNext = () => {
@@ -1342,10 +1342,6 @@
           }
 
           const next = feed[pointer++];
-          const activeToasts = rail.querySelectorAll(".intel-toast:not(.exit)");
-          if (activeToasts.length >= maxConcurrentToasts) {
-            fadeOutAndRemove(activeToasts[0]);
-          }
 
           const card = makeCard(next.title, next.text);
           card.classList.add("intel-toast");
@@ -1361,21 +1357,15 @@
           setTimeout(() => {
             fadeOutAndRemove(card);
           }, visibleMs);
-
-          if (Math.random() < 0.2) {
-            setTimeout(
-              () => {
-                showNext();
-              },
-              randomBetween(260, 720),
-            );
-          }
         };
 
         const scheduleNext = () => {
           const gap = randomBetween(minGapMs, maxGapMs);
           setTimeout(() => {
-            showNext();
+            const activeCount = rail.querySelectorAll(".intel-toast:not(.exit)").length;
+            if (activeCount < maxConcurrentToasts) {
+              showNext();
+            }
             scheduleNext();
           }, gap);
         };
