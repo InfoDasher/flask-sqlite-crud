@@ -1477,27 +1477,27 @@
         const feed = [];
 
         shuffled(gothamQuotes).forEach((line) => {
-          feed.push({ title: "🎙 Gotham Line", text: line });
+          feed.push({ title: "🎙 Gotham Line", text: line, type: "gotham" });
         });
 
         shuffled(chessOpenings).forEach((opening) => {
-          feed.push({ title: `📖 Opening: ${opening.name}`, text: opening.note });
+          feed.push({ title: `📖 Opening: ${opening.name}`, text: opening.note, type: "opening" });
         });
 
         shuffled(marvelMoments).forEach((line) => {
-          feed.push({ title: "🛡 Multiverse Note", text: line, variant: "terminal" });
+          feed.push({ title: "🛡 Multiverse Note", text: line, variant: "terminal", type: "multiverse" });
         });
 
         shuffled(yeshivishMoments).forEach((line) => {
-          feed.push({ title: "📝 Yeshiva Dispatch", text: line, variant: "yeshiva-note" });
+          feed.push({ title: "📝 Yeshiva Dispatch", text: line, variant: "yeshiva-note", type: "yeshiva" });
         });
 
         shuffled(otherNerdNotes).forEach((line) => {
-          feed.push({ title: "🧩 Extra Note", text: line });
+          feed.push({ title: "🧩 Extra Note", text: line, type: "extra" });
         });
 
         shuffled(antiDcJokes).forEach((line) => {
-          feed.push({ title: "🌑 Side Comment", text: line });
+          feed.push({ title: "🌑 Side Comment", text: line, type: "side-comment" });
         });
 
         return shuffled(feed);
@@ -1508,7 +1508,7 @@
         if (!rail) return;
 
         let feed = buildRailFeed();
-        let pointer = 0;
+        let lastToastType = null;
 
         const minVisibleMs = 9800;
         const maxVisibleMs = 17000;
@@ -1532,13 +1532,29 @@
           setTimeout(cleanup, 560);
         };
 
-        const showNext = () => {
-          if (pointer >= feed.length) {
+        const getNextToast = () => {
+          if (feed.length === 0) {
             feed = buildRailFeed();
-            pointer = 0;
           }
 
-          const next = feed[pointer++];
+          let nextIndex = feed.findIndex((entry) => entry.type !== lastToastType);
+
+          if (nextIndex === -1) {
+            feed = buildRailFeed();
+            nextIndex = feed.findIndex((entry) => entry.type !== lastToastType);
+          }
+
+          if (nextIndex === -1) {
+            nextIndex = 0;
+          }
+
+          const [next] = feed.splice(nextIndex, 1);
+          return next;
+        };
+
+        const showNext = () => {
+          const next = getNextToast();
+          lastToastType = next.type || null;
 
           const card = makeCard(next.title, next.text, next.variant || "default");
           card.classList.add("intel-toast");
