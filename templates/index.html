@@ -618,6 +618,29 @@
         overflow: hidden;
       }
 
+      .hero-dismiss {
+        position: absolute;
+        top: 0.62rem;
+        right: 0.62rem;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid #8fa0d8;
+        background: #0f163899;
+        color: #e7eeff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.88rem;
+        line-height: 1;
+        padding: 0;
+        z-index: 2;
+      }
+
+      .hero-dismiss:hover {
+        background: #1b275499;
+      }
+
       .hero::before {
         content: "";
         position: absolute;
@@ -1132,7 +1155,8 @@
           <p class="subtitle">A personal board for chess ideas, multiverse-level hype, game plans, and focused building sessions.</p>
         </div>
 
-        <div class="hero">
+        <div class="hero" id="heroPanel">
+          <button class="hero-dismiss" id="heroDismiss" type="button" title="Dismiss panel" aria-label="Dismiss panel">✕</button>
           <p>"When in doubt, castle early, queue Clash upgrades, and pretend your MTG topdeck was always part of the plan." — Shlomo-core philosophy.</p>
           <div class="hero-tags">
             <span class="hero-tag">♟️ Chess Quotes</span>
@@ -1774,6 +1798,37 @@
         document.getElementById("editModal").classList.remove("open");
       }
 
+      function hideHeroPanel() {
+        const heroPanel = document.getElementById("heroPanel");
+        if (heroPanel) {
+          heroPanel.style.display = "none";
+        }
+
+        try {
+          sessionStorage.setItem("shlomo_hide_hero", "1");
+        } catch (error) {
+          // no-op
+        }
+      }
+
+      function initHeroPanelDismiss() {
+        const heroPanel = document.getElementById("heroPanel");
+        const heroDismiss = document.getElementById("heroDismiss");
+
+        if (!heroPanel || !heroDismiss) return;
+
+        try {
+          if (sessionStorage.getItem("shlomo_hide_hero") === "1") {
+            heroPanel.style.display = "none";
+            return;
+          }
+        } catch (error) {
+          // no-op
+        }
+
+        heroDismiss.addEventListener("click", hideHeroPanel);
+      }
+
       document.querySelectorAll(".edit-btn").forEach((button) => {
         button.addEventListener("click", () => {
           openEdit(Number(button.dataset.id), button.dataset.title || "", button.dataset.description || "", button.dataset.status || "active");
@@ -1845,6 +1900,7 @@
 
       startRailNotifications("leftRail", 200);
       startRailNotifications("rightRail", 1350);
+      initHeroPanelDismiss();
       renderFanfare();
       addComicBursts();
       scheduleAlertCycle();
