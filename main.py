@@ -7,6 +7,29 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 DATABASE = os.environ.get("DATABASE_PATH", "database.db")
 
+SATIRE_SEED_ITEMS = [
+    (
+        "Memorize one GothamChess quote before breakfast",
+        "Deliver it with full commentator energy and pretend a 400-rated blunder is a galaxy brain tactic.",
+    ),
+    (
+        "Draft the Milterton Yeshiva opening repertoire",
+        "Core line: pray, study, castle early, then explain why every move was hashgacha.",
+    ),
+    (
+        "Check Clash of Clans base for spiritual vulnerabilities",
+        "If walls are weak, call it a growth mindset and rebuild before evening learning.",
+    ),
+    (
+        "Brew a Magic: The Gathering deck named 'Capetown Combo'",
+        "Win condition: draw 7 cards, quote chess philosophy, and topdeck exactly on cue.",
+    ),
+    (
+        "Ship one tiny vibe-coder side project",
+        "Minimum scope: one button, one API call, and a README that sounds way too confident.",
+    ),
+]
+
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -30,6 +53,13 @@ def init_db():
         db.execute("""
             CREATE INDEX IF NOT EXISTS idx_items_status ON items(status)
         """)
+
+        item_count = db.execute("SELECT COUNT(*) AS total FROM items").fetchone()["total"]
+        if item_count == 0:
+            db.executemany(
+                "INSERT INTO items (title, description, status) VALUES (?, ?, 'active')",
+                SATIRE_SEED_ITEMS,
+            )
 
 
 init_db()
