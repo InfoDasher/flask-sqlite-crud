@@ -6,7 +6,7 @@
     <title>Shlomo Levin To-Do Board</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         --bg: #0f1222;
@@ -406,6 +406,45 @@
       .side-card-terminal p {
         color: #86efac;
         text-shadow: 0 0 8px #22c55e40;
+      }
+
+      .side-card-yeshiva {
+        border-color: #eab308;
+        background: linear-gradient(170deg, #fff9c4f0, #fde68af0 64%, #fcd34de8);
+        box-shadow:
+          0 10px 22px #78350f3b,
+          inset 0 0 0 1px #facc15;
+        color: #3b2f16;
+        position: relative;
+      }
+
+      .side-card-yeshiva::before {
+        content: "";
+        position: absolute;
+        top: 0.35rem;
+        right: 0.45rem;
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, #fff8d6 0 48%, #fbbf24 49% 100%);
+        border-radius: 2px;
+        box-shadow: -1px 1px 0 #d97706;
+      }
+
+      .side-card-yeshiva h4 {
+        color: #854d0e;
+        font-family: "Caveat", "Space Grotesk", cursive;
+        font-size: 1.1rem;
+        letter-spacing: 0.1px;
+        text-transform: none;
+        margin-bottom: 0.26rem;
+      }
+
+      .side-card-yeshiva p {
+        color: #4d3a0b;
+        font-family: "Caveat", "Space Grotesk", cursive;
+        font-size: 1.02rem;
+        line-height: 1.24;
+        letter-spacing: 0.1px;
       }
 
       .terminal-typing {
@@ -1308,6 +1347,9 @@
         card.className = "side-card";
         if (variant === "terminal") {
           card.classList.add("side-card-terminal");
+        } else if (variant === "yeshiva-note") {
+          card.classList.add("side-card-yeshiva");
+          card.style.transform = `rotate(${(-2.2 + Math.random() * 4.4).toFixed(2)}deg)`;
         }
 
         const h4 = document.createElement("h4");
@@ -1374,7 +1416,7 @@
         });
 
         shuffled(yeshivishMoments).forEach((line) => {
-          feed.push({ title: "📚 Yeshiva Dispatch", text: line });
+          feed.push({ title: "📝 Yeshiva Dispatch", text: line, variant: "yeshiva-note" });
         });
 
         shuffled(otherNerdNotes).forEach((line) => {
