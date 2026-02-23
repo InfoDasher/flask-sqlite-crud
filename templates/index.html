@@ -367,6 +367,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.7rem;
+        min-height: 420px;
       }
 
       .rail-title {
@@ -385,6 +386,28 @@
         background: linear-gradient(165deg, #121b3688, #1d2a4a80);
         box-shadow: 0 8px 24px #02061752;
         padding: 0.65rem 0.72rem;
+      }
+
+      .intel-toast {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+        transition:
+          opacity 0.28s ease,
+          transform 0.28s ease,
+          filter 0.24s ease;
+        filter: saturate(0.92);
+      }
+
+      .intel-toast.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: saturate(1.08);
+      }
+
+      .intel-toast.exit {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.98);
+        filter: blur(1px) saturate(1.2);
       }
 
       .side-card h4 {
@@ -1229,21 +1252,75 @@
         return card;
       }
 
-      function renderRail(railId) {
-        const rail = document.getElementById(railId);
-        const quotePool = shuffled(gothamQuotes).slice(0, 2);
-        const openingPool = shuffled(chessOpenings).slice(0, 2);
-        const marvelPool = shuffled(marvelMoments).slice(0, 1);
-        const dcPool = shuffled(antiDcJokes).slice(0, 1);
-        const otherPool = shuffled(otherNerdNotes).slice(0, 1);
+      function buildRailFeed() {
+        const feed = [];
 
-        rail.appendChild(makeCard("🎙 Gotham Line", quotePool[0]));
-        rail.appendChild(makeCard(`📖 Opening: ${openingPool[0].name}`, openingPool[0].note));
-        rail.appendChild(makeCard("🛡 Multiverse Note", marvelPool[0]));
-        rail.appendChild(makeCard("🎙 Gotham Line", quotePool[1]));
-        rail.appendChild(makeCard(`📖 Opening: ${openingPool[1].name}`, openingPool[1].note));
-        rail.appendChild(makeCard("🧩 Extra Note", otherPool[0]));
-        rail.appendChild(makeCard("🌑 Side Comment", dcPool[0]));
+        shuffled(gothamQuotes).forEach((line) => {
+          feed.push({ title: "🎙 Gotham Line", text: line });
+        });
+
+        shuffled(chessOpenings).forEach((opening) => {
+          feed.push({ title: `📖 Opening: ${opening.name}`, text: opening.note });
+        });
+
+        shuffled(marvelMoments).forEach((line) => {
+          feed.push({ title: "🛡 Multiverse Note", text: line });
+        });
+
+        shuffled(otherNerdNotes).forEach((line) => {
+          feed.push({ title: "🧩 Extra Note", text: line });
+        });
+
+        shuffled(antiDcJokes).forEach((line) => {
+          feed.push({ title: "🌑 Side Comment", text: line });
+        });
+
+        return shuffled(feed);
+      }
+
+      function startRailNotifications(railId, initialDelay = 0) {
+        const rail = document.getElementById(railId);
+        if (!rail) return;
+
+        let feed = buildRailFeed();
+        let pointer = 0;
+
+        const showNext = () => {
+          if (pointer >= feed.length) {
+            feed = buildRailFeed();
+            pointer = 0;
+          }
+
+          const next = feed[pointer++];
+          const existing = rail.querySelector(".intel-toast");
+          if (existing) {
+            existing.classList.add("exit");
+            setTimeout(() => existing.remove(), 260);
+          }
+
+          const card = makeCard(next.title, next.text);
+          card.classList.add("intel-toast");
+          rail.appendChild(card);
+
+          requestAnimationFrame(() => {
+            card.classList.add("show");
+          });
+
+          setTimeout(() => {
+            card.classList.add("exit");
+          }, 2550);
+
+          setTimeout(() => {
+            if (card.isConnected) {
+              card.remove();
+            }
+          }, 3050);
+        };
+
+        setTimeout(() => {
+          showNext();
+          setInterval(showNext, 3600);
+        }, initialDelay);
       }
 
       function renderFanfare() {
@@ -1461,8 +1538,8 @@
         });
       });
 
-      renderRail("leftRail");
-      renderRail("rightRail");
+      startRailNotifications("leftRail", 200);
+      startRailNotifications("rightRail", 1350);
       renderFanfare();
       addComicBursts();
       scheduleAlertCycle();
