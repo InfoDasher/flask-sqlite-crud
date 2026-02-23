@@ -1285,6 +1285,23 @@
         let feed = buildRailFeed();
         let pointer = 0;
 
+        const minVisibleMs = 6200;
+        const maxVisibleMs = 12000;
+        const minGapMs = 1300;
+        const maxGapMs = 4400;
+        const maxConcurrentToasts = 4;
+
+        const randomBetween = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
+
+        const fadeOutAndRemove = (card, fadeMs = 380) => {
+          card.classList.add("exit");
+          setTimeout(() => {
+            if (card.isConnected) {
+              card.remove();
+            }
+          }, fadeMs);
+        };
+
         const showNext = () => {
           if (pointer >= feed.length) {
             feed = buildRailFeed();
@@ -1292,10 +1309,9 @@
           }
 
           const next = feed[pointer++];
-          const existing = rail.querySelector(".intel-toast");
-          if (existing) {
-            existing.classList.add("exit");
-            setTimeout(() => existing.remove(), 260);
+          const activeToasts = rail.querySelectorAll(".intel-toast");
+          if (activeToasts.length >= maxConcurrentToasts) {
+            fadeOutAndRemove(activeToasts[0], 260);
           }
 
           const card = makeCard(next.title, next.text);
@@ -1306,20 +1322,32 @@
             card.classList.add("show");
           });
 
+          const visibleMs = randomBetween(minVisibleMs, maxVisibleMs);
           setTimeout(() => {
-            card.classList.add("exit");
-          }, 2550);
+            fadeOutAndRemove(card, 430);
+          }, visibleMs);
 
+          if (Math.random() < 0.2) {
+            setTimeout(
+              () => {
+                showNext();
+              },
+              randomBetween(260, 720),
+            );
+          }
+        };
+
+        const scheduleNext = () => {
+          const gap = randomBetween(minGapMs, maxGapMs);
           setTimeout(() => {
-            if (card.isConnected) {
-              card.remove();
-            }
-          }, 3050);
+            showNext();
+            scheduleNext();
+          }, gap);
         };
 
         setTimeout(() => {
           showNext();
-          setInterval(showNext, 3600);
+          scheduleNext();
         }, initialDelay);
       }
 
