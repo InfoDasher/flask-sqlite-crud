@@ -109,6 +109,74 @@
           transform 0.22s ease;
       }
 
+      .matrix-warning {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        width: min(92vw, 420px);
+        z-index: 209;
+        border: 1px solid #22c55e;
+        border-radius: 10px;
+        padding: 0.62rem 0.72rem;
+        background: linear-gradient(180deg, #03160bcc, #062312d9);
+        color: #86efac;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        line-height: 1.42;
+        letter-spacing: 0.2px;
+        box-shadow:
+          inset 0 0 0 1px #14532d,
+          0 0 24px #22c55e4f;
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+        pointer-events: none;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .matrix-label {
+        display: inline-block;
+        border: 1px solid #4ade80;
+        border-radius: 999px;
+        padding: 0.08rem 0.48rem;
+        margin-bottom: 0.42rem;
+        font-size: 0.66rem;
+        color: #dcfce7;
+        background: #052e167d;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+      }
+
+      .matrix-text {
+        text-shadow: 0 0 10px #22c55e5e;
+      }
+
+      body.matrix-active .matrix-warning {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        animation: matrixFlicker 0.26s steps(2, end) infinite;
+      }
+
+      body.matrix-active .page-shell {
+        filter: saturate(1.12) contrast(1.05);
+      }
+
+      @keyframes matrixFlicker {
+        0% {
+          clip-path: inset(0 0 0 0);
+        }
+        30% {
+          clip-path: inset(1px 0 0 0);
+        }
+        60% {
+          clip-path: inset(0 0 2px 0);
+        }
+        100% {
+          clip-path: inset(0 0 0 0);
+        }
+      }
+
       body.alert-active .meta-warning {
         opacity: 1;
         transform: translate(-50%, 0) scale(1);
@@ -825,6 +893,10 @@
 
     <div class="glitch-overlay" aria-hidden="true"></div>
     <div class="meta-warning" id="metaWarning">⚠ WARNING — METAVERSE DETECTED ALTERNATIVE INCOMING DANGER</div>
+    <div class="matrix-warning" id="matrixWarning" aria-live="polite">
+      <div class="matrix-label">Matrix Terminal</div>
+      <div class="matrix-text" id="matrixWarningText">[ALERT] timeline packet anomaly detected. rerouting comedic response...</div>
+    </div>
 
     <div class="loading-screen" id="loadingScreen" aria-live="polite">
       <div class="loading-inner">
@@ -1019,6 +1091,17 @@
         "⚠ WARNING — DIMENSIONAL SPIKE: PRIORITY THREAT ENTERING BOARD",
       ];
 
+      const matrixLines = [
+        "[ALERT] Agent Shlomo from Universe 616 requests snacks before deployment.",
+        "[TRACE] Gotham opening theory leaked into timeline_09. tactical drama elevated.",
+        "[PING] Clash walls detected as emotionally vulnerable. initiating fortification protocol.",
+        "[NOTICE] Topdeck probability exceeded lawful limits. judges remain confused.",
+        "[WARNING] Keyboard aura unstable. too much vibe coding in one quadrant.",
+        "[SIGNAL] Alternative self insists this bug is a feature and a prophecy.",
+      ];
+
+      let nextAlertMode = "multiverse";
+
       let soundEnabled = true;
       let audioContext = null;
       const AudioCtor = window.AudioContext || window.webkitAudioContext;
@@ -1209,11 +1292,33 @@
         }, 2300);
       }
 
-      function scheduleMultiverseWarning() {
-        const delay = 15000 + Math.random() * 20000;
+      function triggerMatrixWarning() {
+        if (document.body.classList.contains("loading")) return;
+
+        const matrixText = document.getElementById("matrixWarningText");
+        if (matrixText) {
+          matrixText.textContent = shuffled(matrixLines)[0];
+        }
+
+        document.body.classList.add("matrix-active", "glitching");
+        playSfx("toggle");
+
         setTimeout(() => {
-          triggerMultiverseWarning();
-          scheduleMultiverseWarning();
+          document.body.classList.remove("matrix-active", "glitching");
+        }, 2500);
+      }
+
+      function scheduleAlertCycle() {
+        const delay = 14000 + Math.random() * 18000;
+        setTimeout(() => {
+          if (nextAlertMode === "multiverse") {
+            triggerMultiverseWarning();
+            nextAlertMode = "matrix";
+          } else {
+            triggerMatrixWarning();
+            nextAlertMode = "multiverse";
+          }
+          scheduleAlertCycle();
         }, delay);
       }
 
@@ -1360,7 +1465,7 @@
       renderRail("rightRail");
       renderFanfare();
       addComicBursts();
-      scheduleMultiverseWarning();
+      scheduleAlertCycle();
       if (shouldRunLoader()) {
         bootLoadingScreen();
       }
