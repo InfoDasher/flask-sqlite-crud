@@ -374,6 +374,25 @@
         min-width: 0;
       }
 
+      .brand-layout {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 0.7rem;
+      }
+
+      .brand-piece {
+        grid-row: 1 / span 2;
+        align-self: center;
+        font-size: clamp(3.7rem, 8.6vw, 6.6rem);
+        line-height: 0.88;
+        filter: drop-shadow(0 8px 16px #02061788);
+      }
+
+      .brand-text {
+        min-width: 0;
+      }
+
       .header-kicker {
         font-family: "Bungee", sans-serif;
         font-size: 0.74rem;
@@ -467,9 +486,12 @@
         right: 0.45rem;
         width: 22px;
         height: 22px;
-        background: linear-gradient(135deg, #ffffff 0 48%, #bfdbfe 49% 100%);
+        background: linear-gradient(135deg, #f2dfb3 0 50%, #7a5b2f 51% 100%);
         border-radius: 2px;
-        box-shadow: -1px 1px 0 #60a5fa;
+        border: 1px solid #5d4523;
+        box-shadow:
+          -1px 1px 0 #3f2e16,
+          0 2px 5px #0000002e;
       }
 
       .side-card.side-card-yeshiva h4 {
@@ -1000,6 +1022,14 @@
           font-size: clamp(1.56rem, 7.2vw, 2.1rem);
         }
 
+        .brand-layout {
+          column-gap: 0.5rem;
+        }
+
+        .brand-piece {
+          font-size: clamp(2.8rem, 16vw, 4.1rem);
+        }
+
         .header-top {
           flex-direction: column;
           align-items: stretch;
@@ -1089,8 +1119,13 @@
         <div class="header-bar">
           <div class="header-top">
             <div class="brand-block">
-              <p class="header-kicker">SHLOMO MISSION CONTROL</p>
-              <h1>♟️ Shlomo Levin Taskboard <span>Vibe Coder Arc</span></h1>
+              <div class="brand-layout">
+                <div class="brand-piece" aria-hidden="true">♟️</div>
+                <div class="brand-text">
+                  <p class="header-kicker">SHLOMO MISSION CONTROL</p>
+                  <h1>Shlomo Levin Taskboard <span>Vibe Coder Arc</span></h1>
+                </div>
+              </div>
             </div>
             <button class="sound-toggle" id="soundToggle" type="button" title="Toggle sound effects">🔊 SFX ON</button>
           </div>
