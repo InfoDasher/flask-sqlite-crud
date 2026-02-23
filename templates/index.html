@@ -713,19 +713,53 @@
       }
 
       .create-form {
-        background: var(--surface);
-        backdrop-filter: blur(6px);
-        border: 1px solid var(--border);
+        background: repeating-linear-gradient(0deg, #22c55e10 0 2px, transparent 2px 5px), linear-gradient(165deg, #031a10f0, #061f16ee 58%, #072019ea);
+        backdrop-filter: blur(4px);
+        border: 1px solid #1f7a4c;
         border-radius: var(--radius);
         padding: 1.15rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 12px 30px #0206174d;
+        box-shadow:
+          inset 0 0 0 1px #14532d,
+          0 12px 30px #0206174d,
+          0 0 22px #22c55e30;
       }
 
       .create-form h2 {
-        font-size: 1.03rem;
+        font-size: 1.12rem;
         margin-bottom: 0.8rem;
-        color: #d8e3ff;
+        color: #bbf7d0;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.35px;
+      }
+
+      .create-form input,
+      .create-form textarea {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.18rem;
+        line-height: 1.35;
+        border-color: #2d8f62;
+        background: #010b1fd6;
+        color: #dcfce7;
+      }
+
+      .create-form input::placeholder,
+      .create-form textarea::placeholder {
+        color: #86efac99;
+      }
+
+      .create-form input[type="text"] {
+        min-height: 3.1rem;
+      }
+
+      .create-form textarea {
+        min-height: 108px;
+      }
+
+      .create-form input:focus,
+      .create-form textarea:focus {
+        border-color: #4ade80;
+        box-shadow: 0 0 0 2px #22c55e33;
       }
 
       .form-row {
