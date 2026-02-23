@@ -392,22 +392,21 @@
         opacity: 0;
         transform: translateY(14px) scale(0.96);
         transition:
-          opacity 0.28s ease,
-          transform 0.28s ease,
-          filter 0.24s ease;
-        filter: saturate(0.92);
+          opacity 0.32s ease,
+          transform 0.32s ease;
+        will-change: opacity, transform;
+        backface-visibility: hidden;
       }
 
       .intel-toast.show {
         opacity: 1;
         transform: translateY(0) scale(1);
-        filter: saturate(1.08);
       }
 
       .intel-toast.exit {
         opacity: 0;
-        transform: translateY(-12px) scale(0.98);
-        filter: blur(1px) saturate(1.2);
+        transform: translateY(-8px) scale(0.985);
+        pointer-events: none;
       }
 
       .side-card h4 {
@@ -1293,13 +1292,18 @@
 
         const randomBetween = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
 
-        const fadeOutAndRemove = (card, fadeMs = 380) => {
+        const fadeOutAndRemove = (card) => {
+          if (!card || card.classList.contains("exit")) return;
           card.classList.add("exit");
-          setTimeout(() => {
+
+          const cleanup = () => {
             if (card.isConnected) {
               card.remove();
             }
-          }, fadeMs);
+          };
+
+          card.addEventListener("transitionend", cleanup, { once: true });
+          setTimeout(cleanup, 420);
         };
 
         const showNext = () => {
@@ -1309,9 +1313,9 @@
           }
 
           const next = feed[pointer++];
-          const activeToasts = rail.querySelectorAll(".intel-toast");
+          const activeToasts = rail.querySelectorAll(".intel-toast:not(.exit)");
           if (activeToasts.length >= maxConcurrentToasts) {
-            fadeOutAndRemove(activeToasts[0], 260);
+            fadeOutAndRemove(activeToasts[0]);
           }
 
           const card = makeCard(next.title, next.text);
@@ -1319,12 +1323,14 @@
           rail.appendChild(card);
 
           requestAnimationFrame(() => {
-            card.classList.add("show");
+            requestAnimationFrame(() => {
+              card.classList.add("show");
+            });
           });
 
           const visibleMs = randomBetween(minVisibleMs, maxVisibleMs);
           setTimeout(() => {
-            fadeOutAndRemove(card, 430);
+            fadeOutAndRemove(card);
           }, visibleMs);
 
           if (Math.random() < 0.2) {
