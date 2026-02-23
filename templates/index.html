@@ -1087,6 +1087,31 @@
         "Every mission starts with patience, not panic.",
         "Big finales come from quiet prep turns.",
         "Protect your king like the timeline depends on it.",
+        "Even Doctor Strange checks tactics before opening a portal.",
+        "If the plan snaps, call it Endgame and calculate again.",
+        "The best hero move is sometimes just improving one piece.",
+        "No infinity stones needed—just clean fundamentals and nerve.",
+        "Multiverse noise is loud; good move choices are louder.",
+        "Shield up, king safe, then launch the cinematic combo.",
+        "Post-credit lesson: one blunder can rewrite the whole timeline.",
+        "Wakanda-level prep, then strike with Thor-level confidence.",
+        "When chaos appears, become Captain Calm and centralize.",
+        "You do not need superpowers to play one accurate move.",
+      ];
+
+      const yeshivishMoments = [
+        "Chevra update: we made a cheshbon and this move is mamash legal.",
+        "This whole line is gevaldig—if not, we say it's l'halacha tomorrow.",
+        "B'kitzur: less shtick, more development, and the board becomes menschlich.",
+        "I held from attacking until move 20—real yishuv hadaas energy.",
+        "If the tactic isn't clear, ask a kushya and improve your worst piece.",
+        "Today's seder: opening prep, coffee, then one honest blunder review.",
+        "He called it a sacrifice; the beis medrash called it optimistic.",
+        "No panic, achi—first we make a seder, then we make a combo.",
+        "This position needs less drama and more seichel.",
+        "Aliyah l'regel canceled; aliyah to the open file approved.",
+        "We were mevarer the line for 40 minutes and still forgot to castle.",
+        "He said it's a trap. I said it's hashgacha with extra steps.",
       ];
 
       const antiDcJokes = ["No dark-grit monologues, only clean tactical plans.", "Today's board has zero gloomy rooftop speeches.", "Less brooding city drama, more direct combinations."];
@@ -1264,6 +1289,10 @@
 
         shuffled(marvelMoments).forEach((line) => {
           feed.push({ title: "🛡 Multiverse Note", text: line });
+        });
+
+        shuffled(yeshivishMoments).forEach((line) => {
+          feed.push({ title: "📚 Yeshiva Dispatch", text: line });
         });
 
         shuffled(otherNerdNotes).forEach((line) => {
